@@ -26,7 +26,7 @@ public class OrderService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private Order save(Order order) {
+    public Order save(Order order) {
         for (OrderLine orderLine : order.getOrderLines()) {
             orderLine.setOrder(order);
         }
