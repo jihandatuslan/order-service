@@ -49,6 +49,21 @@ public class OrderService {
         return response;
     }
 
+    public OrderResponse findByOrderNumber(String orderNumber) {
+        Order order = repoOrder.findByOrderNumber(orderNumber);
+        if (order==null) {
+            return null;
+        }
+
+        OrderResponse response = new OrderResponse(order.getId(), order.getOrderNumber(), order.getOrderDate(), findCustomerById(order.getCustomerId()), new ArrayList<OrderLineResponse>());
+
+        for (OrderLine orderLine : order.getOrderLines()) {
+            product product= findProductById(orderLine.getProductId());
+            response.getOrderLines().add(new OrderLineResponse(orderLine.getId(), product, orderLine.getQuantity(), orderLine.getPrice()));
+        }
+        return response;
+    }
+
     public Customer findCustomerById(Long id) {
         return restTemplate.getForObject("http://localhost:8081/api/customers/" + id, Customer.class);
     }

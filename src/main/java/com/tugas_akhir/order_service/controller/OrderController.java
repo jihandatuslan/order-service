@@ -18,6 +18,11 @@ public class OrderController {
         return orderService.findById(id);
     }
 
+    @GetMapping("/order-number/{number}")
+    public OrderResponse findByOrderNumber(@PathVariable("number") String number){
+        return orderService.findByOrderNumber(number);
+    }
+
     @PostMapping
     public Order save(@RequestBody Order order) {
         return orderService.save(order);
