@@ -65,10 +65,10 @@ public class OrderService {
     }
 
     public Customer findCustomerById(Long id) {
-        return restTemplate.getForObject("http://localhost:8081/api/customers/" + id, Customer.class);
+        return restTemplate.getForObject("http://CUSTOMER-SERVICE/api/customers/" + id, Customer.class);
     }
 
     public product findProductById(Long id) {
-        return restTemplate.getForObject("http://localhost:8082/api/products/" + id, product.class);
+        return restTemplate.getForObject("http://PRODUCT-SERVICE/api/products/" + id, product.class);
     }
 }
