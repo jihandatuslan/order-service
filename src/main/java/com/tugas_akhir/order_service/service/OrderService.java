@@ -1,5 +1,6 @@
 package com.tugas_akhir.order_service.service;
 
+import com.tugas_akhir.order_service.WebClient.CustomerClient;
 import com.tugas_akhir.order_service.dto.Customer;
 import com.tugas_akhir.order_service.dto.OrderLineResponse;
 import com.tugas_akhir.order_service.dto.OrderResponse;
@@ -26,6 +27,9 @@ public class OrderService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private CustomerClient customerClient;
+
     public Order save(Order order) {
         for (OrderLine orderLine : order.getOrderLines()) {
             orderLine.setOrder(order);
@@ -40,7 +44,7 @@ public class OrderService {
         }
 
         Order order = optOrder.get();
-        OrderResponse response = new OrderResponse(order.getId(), order.getOrderNumber(), order.getOrderDate(), findCustomerById(order.getCustomerId()), new ArrayList<OrderLineResponse>());
+        OrderResponse response = new OrderResponse(order.getId(), order.getOrderNumber(), order.getOrderDate(), customerClient.findById(order.getCustomerId()), new ArrayList<OrderLineResponse>());
 
         for (OrderLine orderLine : order.getOrderLines()) {
             product product= findProductById(orderLine.getProductId());
