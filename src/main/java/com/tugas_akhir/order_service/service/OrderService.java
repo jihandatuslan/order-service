@@ -1,6 +1,7 @@
 package com.tugas_akhir.order_service.service;
 
 import com.tugas_akhir.order_service.WebClient.CustomerClient;
+import com.tugas_akhir.order_service.WebClient.ProductClient;
 import com.tugas_akhir.order_service.dto.Customer;
 import com.tugas_akhir.order_service.dto.OrderLineResponse;
 import com.tugas_akhir.order_service.dto.OrderResponse;
@@ -24,8 +25,11 @@ public class OrderService {
     @Autowired
     private RepoOrder repoOrder;
 
+//    @Autowired
+//    private RestTemplate restTemplate;
+
     @Autowired
-    private RestTemplate restTemplate;
+    private ProductClient productClient;
 
     @Autowired
     private CustomerClient customerClient;
@@ -47,7 +51,7 @@ public class OrderService {
         OrderResponse response = new OrderResponse(order.getId(), order.getOrderNumber(), order.getOrderDate(), customerClient.findById(order.getCustomerId()), new ArrayList<OrderLineResponse>());
 
         for (OrderLine orderLine : order.getOrderLines()) {
-            product product= findProductById(orderLine.getProductId());
+            product product= productClient.findById(orderLine.getProductId());
             response.getOrderLines().add(new OrderLineResponse(orderLine.getId(), product, orderLine.getQuantity(), orderLine.getPrice()));
         }
         return response;
@@ -59,20 +63,20 @@ public class OrderService {
             return null;
         }
 
-        OrderResponse response = new OrderResponse(order.getId(), order.getOrderNumber(), order.getOrderDate(), findCustomerById(order.getCustomerId()), new ArrayList<OrderLineResponse>());
+        OrderResponse response = new OrderResponse(order.getId(), order.getOrderNumber(), order.getOrderDate(), customerClient.findById(order.getCustomerId()), new ArrayList<OrderLineResponse>());
 
         for (OrderLine orderLine : order.getOrderLines()) {
-            product product= findProductById(orderLine.getProductId());
+            product product= productClient.findById(orderLine.getProductId());
             response.getOrderLines().add(new OrderLineResponse(orderLine.getId(), product, orderLine.getQuantity(), orderLine.getPrice()));
         }
         return response;
     }
 
-    public Customer findCustomerById(Long id) {
-        return restTemplate.getForObject("http://CUSTOMER-SERVICE/api/customers/" + id, Customer.class);
-    }
-
-    public product findProductById(Long id) {
-        return restTemplate.getForObject("http://PRODUCT-SERVICE/api/products/" + id, product.class);
-    }
+//    public Customer findCustomerById(Long id) {
+//        return restTemplate.getForObject("http://CUSTOMER-SERVICE/api/customers/" + id, Customer.class);
+//    }
+//
+//    public product findProductById(Long id) {
+//        return restTemplate.getForObject("http://PRODUCT-SERVICE/api/products/" + id, product.class);
+//    }
 }
