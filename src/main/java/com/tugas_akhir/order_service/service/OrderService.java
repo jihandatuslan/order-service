@@ -9,6 +9,7 @@ import com.tugas_akhir.order_service.dto.product;
 import com.tugas_akhir.order_service.entity.Order;
 import com.tugas_akhir.order_service.entity.OrderLine;
 import com.tugas_akhir.order_service.repository.RepoOrder;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class OrderService {
         return repoOrder.save(order);
     }
 
+    @CircuitBreaker(name = "customerService", fallbackMethod = "fallbackFindCustomerById")
     public OrderResponse findById(Long id) {
         Optional<Order> optOrder = repoOrder.findById(id);
         if (!optOrder.isPresent()) {
@@ -55,6 +57,11 @@ public class OrderService {
             response.getOrderLines().add(new OrderLineResponse(orderLine.getId(), product, orderLine.getQuantity(), orderLine.getPrice()));
         }
         return response;
+    }
+
+    private OrderResponse fallbackFindCustomerById(Long id, Throwable throwable) {
+        System.out.println("fallbackFindCustomerById");
+        return new OrderResponse();
     }
 
     public OrderResponse findByOrderNumber(String orderNumber) {
